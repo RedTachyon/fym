@@ -10,10 +10,10 @@ from numpy.random import Generator
 from numpy.typing import NDArray
 
 import fym
-from fym.core import State, Time, Representation, Action
+from fym.core import State, Time, Embedding, Action
 
 
-class MountainCarEnv(fym.BaseRLE[NDArray[np.float32], int]):
+class MountainCarEnv(fym.SARLE[NDArray[np.float32], int]):
     """
     Description:
         The agent (a car) is started at the bottom of a valley. For any given
@@ -91,11 +91,10 @@ class MountainCarEnv(fym.BaseRLE[NDArray[np.float32], int]):
         return -1.0
 
     @classmethod
-    def terminal(cls, time: Time, state: State) -> bool:
+    def terminal(cls, state: State) -> bool:
         position, velocity = state
 
-        done = (position >= cls.goal_position and
-                velocity >= cls.goal_velocity) or 0 < time <= cls.max_time
+        done = position >= cls.goal_position and velocity >= cls.goal_velocity
 
         return done
 
@@ -107,7 +106,7 @@ class MountainCarEnv(fym.BaseRLE[NDArray[np.float32], int]):
         return np.array([rng.uniform(-0.6, 0.4), 0], dtype=np.float32)
 
     @classmethod
-    def representation(cls, time: Time, state: State) -> Representation:
+    def embedding(cls, time: Time, state: State) -> Embedding:
         return state
 
     @staticmethod
@@ -125,7 +124,6 @@ class MountainCarEnv(fym.BaseRLE[NDArray[np.float32], int]):
         scale = screen_width / world_width
         carwidth = 40
         carheight = 20
-
 
         viewer = rendering.Viewer(screen_width, screen_height)
         xs = np.linspace(cls.min_position, cls.max_position, 100)
@@ -146,15 +144,11 @@ class MountainCarEnv(fym.BaseRLE[NDArray[np.float32], int]):
         viewer.add_geom(car)
         frontwheel = rendering.make_circle(carheight / 2.5)
         frontwheel.set_color(0.5, 0.5, 0.5)
-        frontwheel.add_attr(
-            rendering.Transform(translation=(carwidth / 4, clearance))
-        )
+        frontwheel.add_attr(rendering.Transform(translation=(carwidth / 4, clearance)))
         frontwheel.add_attr(cartrans)
         viewer.add_geom(frontwheel)
         backwheel = rendering.make_circle(carheight / 2.5)
-        backwheel.add_attr(
-            rendering.Transform(translation=(-carwidth / 4, clearance))
-        )
+        backwheel.add_attr(rendering.Transform(translation=(-carwidth / 4, clearance)))
         backwheel.add_attr(cartrans)
         backwheel.set_color(0.5, 0.5, 0.5)
         viewer.add_geom(backwheel)

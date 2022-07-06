@@ -1,1 +1,1 @@
-from fym.core import BaseRLE
+from fym.core import SARLE

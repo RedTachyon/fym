@@ -14,10 +14,10 @@ import fym
 import numpy as np
 from numpy.typing import NDArray
 
-from fym.core import State, Time, Representation, Action
+from fym.core import State, Time, Embedding, Action
 
 
-class CartPoleEnv(fym.BaseRLE[NDArray[np.float32], int]):
+class CartPoleEnv(fym.SARLE[NDArray[np.float32], int]):
     """
     Description:
         A pole is attached by an un-actuated joint to a cart, which moves along
@@ -134,11 +134,11 @@ class CartPoleEnv(fym.BaseRLE[NDArray[np.float32], int]):
         return reward
 
     @classmethod
-    def representation(cls, time: Time, state: State) -> Representation:
+    def embedding(cls, time: Time, state: State) -> Embedding:
         return np.append(state, time / cls.max_time)
 
     @classmethod
-    def terminal(cls, time: Time, state: State) -> bool:
+    def terminal(cls, state: State) -> bool:
         x, x_dot, theta, theta_dot = state
 
         done = bool(
@@ -146,7 +146,6 @@ class CartPoleEnv(fym.BaseRLE[NDArray[np.float32], int]):
             or x > cls.x_threshold
             or theta < -cls.theta_threshold_radians
             or theta > cls.theta_threshold_radians
-            or (0 < cls.max_time <= time)
         )
 
         return done

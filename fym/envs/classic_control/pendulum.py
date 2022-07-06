@@ -6,10 +6,10 @@ import fym
 import numpy as np
 from os import path
 
-from fym.core import State, Action, Time, Representation
+from fym.core import State, Action, Time, Embedding
 
 
-class PendulumEnv(fym.BaseRLE[np.ndarray, np.ndarray]):
+class PendulumEnv(fym.SARLE[np.ndarray, np.ndarray]):
     max_time = 200
     max_speed = 8
     max_torque = 2.0
@@ -66,13 +66,13 @@ class PendulumEnv(fym.BaseRLE[np.ndarray, np.ndarray]):
         return state
 
     @classmethod
-    def representation(cls, time: Time, state: State) -> Representation:
+    def embedding(cls, time: Time, state: State) -> Embedding:
         theta, thetadot = state
         return np.array([np.cos(theta), np.sin(theta), thetadot], dtype=np.float32)
 
     @classmethod
-    def terminal(cls, time: Time, state: State) -> bool:
-        return 0 < cls.max_time <= time
+    def terminal(cls, state: State) -> bool:
+        return False
 
     @classmethod
     def render(cls, time: Time, state: State, last_u: Optional[Action] = None):
