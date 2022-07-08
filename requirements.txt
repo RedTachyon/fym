@@ -2,3 +2,4 @@ numpy~=1.21.2
 setuptools~=58.0.4
 pygame~=2.0.2
 pyglet~=1.5.21
+jax~=0.3.14
