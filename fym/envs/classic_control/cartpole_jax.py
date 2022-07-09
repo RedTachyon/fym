@@ -15,8 +15,9 @@ import jax.numpy as jnp
 
 import fym
 import numpy as np
-from numpy.typing import NDArray
+# from numpy.typing import NDArray
 
+from flax import struct
 from fym.core import State, Time, Embedding, Action
 
 VECTORIZE = True
